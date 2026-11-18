@@ -125,10 +125,10 @@ export function Hero() {
         </div>
 
         {/* banana leaves tucked into the top corners */}
-        <div className="h-leaf-l pointer-events-none absolute -left-[14vw] top-[7svh] z-[4] h-[32svh] will-change-transform sm:-left-[3vw] sm:top-[9svh] sm:h-[54svh]">
+        <div className="h-leaf-l pointer-events-none absolute -left-[5vw] top-[7svh] z-[4] h-[32svh] will-change-transform sm:-left-[1vw] sm:top-[9svh] sm:h-[54svh]">
           <img src="/assets/il-banana-left.webp" alt="" className="sway-l h-full w-auto max-w-none" />
         </div>
-        <div className="h-leaf-r pointer-events-none absolute -right-[14vw] top-[7svh] z-[4] h-[32svh] will-change-transform sm:-right-[3vw] sm:top-[9svh] sm:h-[52svh]">
+        <div className="h-leaf-r pointer-events-none absolute -right-[5vw] top-[7svh] z-[4] h-[32svh] will-change-transform sm:-right-[1vw] sm:top-[9svh] sm:h-[52svh]">
           <img src="/assets/il-banana-right.webp" alt="" className="sway-r h-full w-auto max-w-none" />
         </div>
 
