@@ -1,0 +1,289 @@
+@import "tailwindcss";
+
+/* ── Pasupu · Kumkuma · Rayi — design tokens ───────────────────────── */
+:root {
+  --rose: #a4644c; /* terracotta display ink (reference-matched) */
+  --rose-deep: #7d4433;
+  --ink: #5e3427; /* body text */
+  --kumkum: #9e1f2e;
+  --sindoor: #b8323a;
+  --turmeric: #e9b21e;
+  --gold: #c9a056;
+  --gold-light: #e6cc8f;
+  --brass: #b8862b;
+  --leaf: #4f7a35;
+  --cream: #fbf3e2;
+  --cream-deep: #f3e4c4;
+  --peach: #f6dcc3;
+  --maroon-band: #6e1f24;
+
+  /* legacy aliases used by a few components */
+  --maroon: var(--rose-deep);
+  --maroon-ink: var(--ink);
+  --brass-light: var(--gold-light);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@theme inline {
+  --color-rose: var(--rose);
+  --color-ink: var(--ink);
+  --color-kumkum: var(--kumkum);
+  --color-gold: var(--gold);
+  --color-cream: var(--cream);
+  --font-serif: var(--font-serif);
+  --font-display: var(--font-display);
+  --font-script: var(--font-script);
+  --font-caps: var(--font-caps);
+}
+
+html {
+  background: var(--cream);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 19px;
+  line-height: 1.6;
+  background: var(--cream) url("/assets/paper.webp") repeat;
+  background-size: 640px;
+  overflow-x: clip;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Lock page while the invitation is closed */
+html.gate-closed,
+html.gate-closed body {
+  overflow: hidden;
+  height: 100%;
+}
+
+@layer components {
+  /* ── Typography ─────────────────────────────────────────────────── */
+  .t-display {
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 400;
+    color: var(--rose);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+  }
+  .t-script {
+    font-family: var(--font-script), cursive;
+    color: var(--rose);
+    line-height: 1;
+  }
+  .t-caps {
+    font-family: var(--font-caps), serif;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .sec-eyebrow {
+    font-family: var(--font-caps), serif;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-size: 0.74rem;
+    color: var(--brass);
+  }
+  .sec-title {
+    font-family: var(--font-display), Georgia, serif;
+    color: var(--rose);
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    line-height: 1.02;
+  }
+  .sec-sub {
+    font-family: var(--font-serif), Georgia, serif;
+    font-style: italic;
+    color: var(--ink);
+    opacity: 0.85;
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    line-height: 1.45;
+  }
+
+  /* ── Temple-wall stripes ────────────────────────────────────────── */
+  .temple-stripes {
+    height: 18px;
+    background: repeating-linear-gradient(90deg, var(--sindoor) 0 24px, #fff8ec 24px 48px);
+    position: relative;
+  }
+  .temple-stripes::before,
+  .temple-stripes::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gold);
+  }
+  .temple-stripes::before {
+    top: -3px;
+  }
+  .temple-stripes::after {
+    bottom: -3px;
+  }
+
+  /* ── Buttons ────────────────────────────────────────────────────── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.9rem 2.2rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #b0563f, var(--rose-deep));
+    color: #fff6e6;
+    font-family: var(--font-caps), serif;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    box-shadow:
+      0 0 0 3px var(--cream),
+      0 0 0 4.5px var(--gold),
+      0 14px 30px -12px rgba(125, 68, 51, 0.7);
+    transition: transform 0.4s var(--ease-out);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+  }
+  .btn-primary:focus-visible,
+  .btn-outline:focus-visible {
+    outline: 2px solid var(--turmeric);
+    outline-offset: 6px;
+  }
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    border: 1px solid var(--gold);
+    color: var(--rose-deep);
+    font-family: var(--font-caps), serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.66rem;
+    transition: background 0.3s;
+  }
+  .btn-outline:hover {
+    background: rgba(201, 160, 86, 0.15);
+  }
+
+  /* ── Muggu mandala (recolourable via background-color) ─────────── */
+  .muggu {
+    -webkit-mask: url("/assets/muggu-mandala.webp") center / contain no-repeat;
+    mask: url("/assets/muggu-mandala.webp") center / contain no-repeat;
+    background-color: var(--gold);
+    aspect-ratio: 1;
+  }
+}
+
+/* ── Ambient motion ────────────────────────────────────────────────── */
+@keyframes sway-l {
+  0%,
+  100% {
+    transform: rotate(-1.6deg);
+  }
+  50% {
+    transform: rotate(1.8deg);
+  }
+}
+@keyframes sway-r {
+  0%,
+  100% {
+    transform: rotate(1.5deg);
+  }
+  50% {
+    transform: rotate(-1.9deg);
+  }
+}
+@keyframes dangle {
+  0%,
+  100% {
+    transform: rotate(-2.4deg);
+  }
+  50% {
+    transform: rotate(2.4deg);
+  }
+}
+@keyframes drift {
+  from {
+    transform: translateX(-4vw);
+  }
+  to {
+    transform: translateX(4vw);
+  }
+}
+@keyframes cloud-drift {
+  from {
+    transform: translateX(-40vw);
+  }
+  to {
+    transform: translateX(140vw);
+  }
+}
+.cloud {
+  position: absolute;
+  left: 0;
+  will-change: transform;
+  animation: cloud-drift linear infinite;
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.sway-l {
+  transform-origin: 0% 30%;
+  animation: sway-l 8s var(--ease-in-out) infinite;
+}
+.sway-r {
+  transform-origin: 100% 30%;
+  animation: sway-r 9.2s var(--ease-in-out) infinite;
+}
+.dangle {
+  transform-origin: 50% 0%;
+  animation: dangle 4.2s var(--ease-in-out) infinite;
+}
+.bell {
+  transform-origin: 50% 0%;
+  animation: dangle 3.4s var(--ease-in-out) infinite;
+}
+.drift {
+  animation: drift 40s var(--ease-in-out) infinite alternate;
+}
+.spin-slow {
+  animation: spin-slow 120s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
