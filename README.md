@@ -1,36 +1,22 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# South-indian-theme-
 
-## Getting Started
+**Vijay & Rashmika Wedding** — a South Indian (Telugu) temple-themed wedding invitation website.
 
-First, run the development server:
+Built with Next.js, GSAP ScrollTrigger and Lenis smooth scrolling.
 
+## Highlights
+- Opening card that draws a muggu (kolam) line by line, then blooms into the site; music starts on "Open Invitation".
+- Pinned hero: painted sky with drifting clouds, mango-leaf thoranam, banana leaves and the Srikalahasti gopuram rising on scroll.
+- Paper scroll invitation that unrolls to reveal the couple.
+- Celebrations, muhurtham countdown, photo moments, venue, RSVP and a kolam-bordered footer.
+
+## Run locally
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Editing content
+All names, dates, venue and copy live in `src/content/wedding.ts`. Photos are in `public/photos/`, artwork in `public/assets/`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Dates, venue and timings are sample content — verify before sharing. RSVPs are written to `data/rsvps.jsonl` locally; on Vercel they appear in the function logs (connect a database or sheet for permanent storage).
