@@ -7,48 +7,19 @@ import { couple, opening, wedding } from "@/content/wedding";
 import { useAudio } from "./AudioProvider";
 import { Muggu } from "./ui";
 import { kolamChainTile } from "@/lib/patterns";
+import MUGGU from "@/lib/muggu-trace.json";
 
 export const OPEN_EVENT = "invitation:open";
 
-/* ── pulli-kolam geometry (viewBox 0 0 200 200) ── */
-const C = 100;
-const R = 62; // centre → outer (axis) dots
-const r = 30; // centre → inner (diagonal) dots
-const petal = (deg: number) => {
-  const a = (deg * Math.PI) / 180;
-  const tip = { x: C + Math.cos(a) * R, y: C + Math.sin(a) * R };
-  const w = 15;
-  const nx = -Math.sin(a) * w;
-  const ny = Math.cos(a) * w;
-  const m1 = { x: C + Math.cos(a) * R * 0.5, y: C + Math.sin(a) * R * 0.5 };
-  // starts at the centre ring, loops out round the tip and back — one stroke
-  const s = { x: C + Math.cos(a) * 9, y: C + Math.sin(a) * 9 };
-  return `M${s.x},${s.y} Q${m1.x + nx * 1.6},${m1.y + ny * 1.6} ${tip.x},${tip.y} Q${m1.x - nx * 1.6},${m1.y - ny * 1.6} ${s.x},${s.y}`;
-};
-const PETALS = [270, 0, 90, 180].map(petal);
-const AXIS = [
-  [C, C - R],
-  [C + R, C],
-  [C, C + R],
-  [C - R, C],
-];
-const DIAMOND = AXIS.map((p, i) => {
-  const q = AXIS[(i + 1) % 4];
-  return `M${p[0]},${p[1]} L${q[0]},${q[1]}`;
-});
-const RING = `M${C + 9},${C} A9,9 0 1 1 ${C - 9},${C} A9,9 0 1 1 ${C + 9},${C}`;
-const DIAG = [
-  [C + r, C - r],
-  [C + r, C + r],
-  [C - r, C + r],
-  [C - r, C - r],
-];
+/* ── the reference mandala muggu, traced to vectors (tools/trace_muggu.py) ── */
+const DOTS = [...MUGGU.dots].sort((a, b) => Math.hypot(a.x - 500, a.y - 500) - Math.hypot(b.x - 500, b.y - 500));
+const STROKE = MUGGU.strokeWidth * 0.8;
 
 /**
- * Minimal opening screen. On "Open Invitation" (as in the reference): the card
- * fades away, muggu dots appear one by one, a single line circles the centre,
- * loops out into four petals, joins the outer dots into a diamond, glows —
- * and the page blooms into the temple scene.
+ * Minimal opening screen. On "Open Invitation": the card fades away, the pulli
+ * dots of the mandala muggu appear (rippling out from the centre), then its
+ * lines are drawn end to end — every line finishing together — it glows, and
+ * the page blooms into the temple scene.
  */
 export function OpeningGate() {
   const { start } = useAudio();
@@ -74,23 +45,27 @@ export function OpeningGate() {
     }
     const svg = svgRef.current!;
     const q = gsap.utils.selector(svg);
-    svg.querySelectorAll("path").forEach((p) => {
-      const len = p.getTotalLength();
-      gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
-    });
+    const lines = Array.from(svg.querySelectorAll<SVGPathElement>("path"));
+    const lens = lines.map((p) => p.getTotalLength());
+    const longest = Math.max(...lens);
+    lines.forEach((p, i) => gsap.set(p, { strokeDasharray: lens[i], strokeDashoffset: lens[i] }));
     gsap.set(q("circle"), { scale: 0, transformOrigin: "50% 50%", transformBox: "fill-box" });
 
-    gsap
+    const DRAW = 3.2; // seconds for the whole muggu to be drawn
+    const tl = gsap
       .timeline({ onComplete: () => setGone(true) })
       .to(content.current, { opacity: 0, duration: 0.7, ease: "power2.inOut" })
       .to(root.current!.querySelectorAll(".gate-frame"), { opacity: 1, duration: 0.6, ease: "power2.out" }, "-=0.2")
       .set(svg, { autoAlpha: 1 })
-      .to(q(".d-c"), { scale: 1, duration: 0.35, ease: "back.out(3)" }, "+=0.15")
-      .to(q(".d-o"), { scale: 1, duration: 0.3, stagger: 0.09, ease: "back.out(3)" }, "+=0.05")
-      .to(q(".ring"), { strokeDashoffset: 0, duration: 0.5, ease: "power1.inOut" }, "+=0.1")
-      .to(q(".petal"), { strokeDashoffset: 0, duration: 0.42, stagger: 0.36, ease: "power1.inOut" })
-      .to(q(".side"), { strokeDashoffset: 0, duration: 0.24, stagger: 0.2, ease: "none" }, "-=0.05")
-      .to(svg, { filter: "drop-shadow(0 0 10px rgba(233,178,30,0.95)) drop-shadow(0 0 26px rgba(233,178,30,0.5))", scale: 1.05, duration: 0.6, ease: "power2.out" }, "+=0.1")
+      // 1. dots first — rippling out from the centre
+      .to(q("circle"), { scale: 1, duration: 0.35, stagger: { each: 0.025 }, ease: "back.out(3)" }, "+=0.1")
+      .addLabel("draw", "+=0.15");
+    // 2. then the curves, drawn end to end; each line paced to its length so all finish together
+    lines.forEach((p, i) => {
+      const dur = DRAW * Math.pow(lens[i] / longest, 0.35);
+      tl.to(p, { strokeDashoffset: 0, duration: dur, ease: "none" }, `draw+=${DRAW - dur}`);
+    });
+    tl      .to(svg, { filter: "drop-shadow(0 0 8px rgba(233,178,30,0.7)) drop-shadow(0 0 22px rgba(233,178,30,0.35))", scale: 1.04, duration: 0.6, ease: "power2.out" }, "+=0.15")
       .to(bloom.current, { opacity: 1, duration: 0.7, ease: "power2.in" }, "-=0.15")
       .to(svg, { opacity: 0, duration: 0.6 }, "<0.2")
       .add(finish)
@@ -146,19 +121,14 @@ export function OpeningGate() {
       </div>
 
       {/* the muggu that draws itself */}
-      <svg ref={svgRef} viewBox="0 0 200 200" className="invisible absolute left-1/2 top-1/2 h-60 w-60 -translate-x-1/2 -translate-y-1/2 sm:h-72 sm:w-72" aria-hidden>
-        <g fill="none" stroke="var(--gold)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-          <path className="ring" d={RING} />
-          {PETALS.map((d, i) => (
-            <path key={i} className="petal" d={d} />
-          ))}
-          {DIAMOND.map((d, i) => (
-            <path key={i} className="side" d={d} />
+      <svg ref={svgRef} viewBox={MUGGU.viewBox} className="invisible absolute left-1/2 top-1/2 h-[min(78vw,62vh)] w-[min(78vw,62vh)] -translate-x-1/2 -translate-y-1/2" aria-hidden>
+        <g fill="none" stroke="var(--maroon-band)" strokeWidth={STROKE} strokeLinecap="round" strokeLinejoin="round">
+          {MUGGU.paths.map((d, i) => (
+            <path key={i} d={d} />
           ))}
         </g>
-        <circle className="d-c" cx={C} cy={C} r={2.6} fill="var(--gold)" />
-        {[...DIAG, ...AXIS].map(([x, y], i) => (
-          <circle key={i} className="d-o" cx={x} cy={y} r={2.6} fill="var(--gold)" />
+        {DOTS.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r={p.r * 0.9} fill="var(--maroon-band)" />
         ))}
       </svg>
 
