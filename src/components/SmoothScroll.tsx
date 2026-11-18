@@ -20,9 +20,8 @@ export function SmoothScroll() {
       lerp: 0.085,
       wheelMultiplier: 0.9,
       smoothWheel: true,
-      syncTouch: true,
-      syncTouchLerp: 0.085,
-      touchMultiplier: 1.3,
+      // touch devices keep their native momentum scrolling (smoothest on iOS)
+      syncTouch: false,
       autoRaf: false,
     });
     lenis.on("scroll", ScrollTrigger.update);

@@ -96,10 +96,22 @@ export function Hero() {
         </div>
 
         {/* painted hills — start low, rise on scroll */}
-        <div className="h-hills absolute inset-x-0 top-[78svh] h-[60svh] overflow-hidden">
+        <div className="h-hills absolute inset-x-0 top-[78svh] h-[52svh] overflow-hidden will-change-transform">
           <img src="/assets/bg-hills-mid.webp" alt="" className="h-full w-full object-cover object-top" />
           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[var(--cream)] to-transparent" />
         </div>
+
+        {/* the hero melts into the page within its own bounds (behind the gopuram) */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[26svh]"
+          style={{
+            background: "var(--cream) url(/assets/paper.webp) repeat",
+            backgroundSize: "640px",
+            WebkitMaskImage: "linear-gradient(to top, #000 22%, rgba(0,0,0,0.75) 50%, transparent 100%)",
+            maskImage: "linear-gradient(to top, #000 22%, rgba(0,0,0,0.75) 50%, transparent 100%)",
+          }}
+          aria-hidden
+        />
 
         {/* names on the open sky */}
         <div className="h-names absolute inset-x-0 top-[24%] z-[1] flex flex-col items-center px-6 text-center sm:top-[22%]">
@@ -114,13 +126,11 @@ export function Hero() {
         {/* the real gopuram — peeks from below, rises with the scroll */}
         <div className="h-rise absolute left-1/2 top-[64svh] z-[2] -translate-x-1/2 will-change-transform sm:top-[60svh]">
           <div className="h-gopuram">
-            <img
-              src="/assets/gopuram-dawn.webp"
-              alt="Srikalahasti Rajagopuram"
-              className="h-[88svh] w-auto max-w-none sm:h-[112svh]"
-              style={{ WebkitMaskImage: "linear-gradient(to bottom, #000 74%, transparent 100%)", maskImage: "linear-gradient(to bottom, #000 74%, transparent 100%)" }}
-              fetchPriority="high"
-            />
+            {/* bottom fade is baked into the image (no live CSS mask — much smoother on phones) */}
+            <picture>
+              <source media="(max-width: 639px)" srcSet="/assets/gopuram-dawn-fade-m.webp" />
+              <img src="/assets/gopuram-dawn-fade.webp" alt="Srikalahasti Rajagopuram" className="h-[88svh] w-auto max-w-none sm:h-[112svh]" fetchPriority="high" />
+            </picture>
           </div>
         </div>
 
